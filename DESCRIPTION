@@ -1,4 +1,4 @@
-Package: BolzmannMachinesRPlots
+Package: BoltzmannMachinesRPlots
 Type: Package
 Title: Monitoring plots for BoltzmannMachines.jl in R
 Version: 0.1.0
@@ -9,4 +9,4 @@ Description: Plots that are created with the BoltzmannMachines.jl Julia
     (see https://github.com/stefan-m-lenz/JuliaConnectoR) can be plotted in R.
 License: MIT
 Encoding: UTF-8
-Imports: ggplot2, gridExtra
+Depends: ggplot2, gridExtra

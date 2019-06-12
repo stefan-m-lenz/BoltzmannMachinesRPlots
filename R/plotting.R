@@ -1,3 +1,6 @@
+library(ggplot2)
+library(gridExtra)
+
 plotEvaluation <- function(monitor, evaluation = NULL) {
 
    if (length(monitor) == 0) {
@@ -22,8 +25,3 @@ plotEvaluation <- function(monitor, evaluation = NULL) {
 
 }
 
-
-# result = monitored_fitrbm(barsandstripes(10L, 4L),
-#                           monitoring = juliaExpr("[monitorexactloglikelihood!, monitorreconstructionerror!]"))
-# monitor = result[[1]]
-# plotEvaluation(monitor)
