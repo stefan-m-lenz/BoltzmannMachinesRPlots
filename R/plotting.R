@@ -1,4 +1,4 @@
-plotEvaluation <- function(monitor, evaluation = NULL) {
+plotMonitoring <- function(monitor, evaluation = NULL) {
 
    if (!is.list(monitor) || length(monitor) == 0 || is.null(attr(monitor, "JLTYPE"))) {
       return()
@@ -19,15 +19,25 @@ plotEvaluation <- function(monitor, evaluation = NULL) {
       # this is, e.g., the case when monitor is bundled with a Boltzmann machines,
       # as in the output of monitored_fitdbm
       for (el in monitor) {
-         plotEvaluation(el, evaluation)
+         plotMonitoring(el, evaluation)
       }
    }
 }
 
+plottitles = list(
+   "reconstructionerror" = "Mean reconstruction error",
+   "logproblowerbound" = "Average lower bound of log probability",
+   "loglikelihood" = "Average log-likelihood",
+   "meandiff" = "L²-difference between means \nof generated and original data",
+   "exactloglikelihood" = "Average of exact log-likelihood",
+   "weightsnorm" = "L²-norm of weights",
+   "sd" = "Standard deviation parameters of visible units",
+   "cordiff" = "L²-difference between correlation matrices \nof generated and original data",
+   "freeenergy" = "Free energy")
 
 singleEvaluationPlot <- function(plotdata) {
    ggplot(data = plotdata, aes(x = Epoch, y = Value, color = Dataset)) +
-      geom_line()
+      geom_line() + ggtitle(plottitles[[plotdata$Evaluation[1]]])
 }
 
 

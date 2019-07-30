@@ -4,15 +4,16 @@ library(JuliaConnectoR)
 juliaUsing("BoltzmannMachines")
 result <- monitored_fitrbm(barsandstripes(10L, 4L),
                           monitoring = juliaExpr("monitorexactloglikelihood!"))
-plotEvaluation(result)
+plotMonitoring(result)
 result <- monitored_fitrbm(barsandstripes(10L, 4L),
                           monitoring = juliaExpr("[monitorexactloglikelihood!, monitorreconstructionerror!]"))
-plotEvaluation(result)
+plotMonitoring(result)
 
-result <- monitored_fitdbm(barsandstripes(100L, 4L),
+result <- monitored_fitdbm(barsandstripes(100L, 4L), learningratepretraining = 0.001,
                           monitoring = juliaExpr("monitorexactloglikelihood!"),
                           monitoringpretraining = juliaExpr("monitorreconstructionerror!"))
-plotEvaluation(result)
+plotMonitoring(result)
 
-plotEvaluation(result, "reconstructionerror")
-plotEvaluation(result, c("reconstructionerror", "exactloglikelihood"))
+plotMonitoring(result, "reconstructionerror")
+plotMonitoring(result, c("reconstructionerror", "exactloglikelihood"))
+
