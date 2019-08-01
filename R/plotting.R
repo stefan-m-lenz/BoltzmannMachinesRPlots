@@ -1,29 +1,12 @@
 plotMonitoring <- function(monitor, evaluation = NULL, sdrange = 1.0) {
 
-   if (!is.list(monitor) || length(monitor) == 0) {
-      return(invisible())
+   # plot different evaluations contained in the monitor in one grid
+   evaluations <- extractEvaluations(monitor, evaluation, sdrange)
+   if (length(evaluations) != 0) {
+      plots <- lapply(evaluations, singleEvaluationPlot)
+      grid.arrange(grobs = plots)
    }
-
-   if (!is.null(attr(monitor, "JLTYPE"))) {
-      if (startsWith(attr(monitor, "JLTYPE"), "Array{MonitoringItem")) {
-         # plot different evaluations contained in the monitor in one grid
-         evaluations <- extractEvaluations(monitor, evaluation, sdrange)
-         plots <- lapply(evaluations, singleEvaluationPlot)
-         grid.arrange(grobs = plots)
-         return(invisible())
-      } else if (startsWith(attr(monitor, "JLTYPE"), "Array{Array{MonitoringItem")) {
-         # plot all monitoring results from monitoring a DBM or DBN in a grid
-         evaluations <- unlist(lapply(monitor, function(m) {extractEvaluations(m, evaluation, sdrange)}),
-                               recursive = FALSE)
-         plots <- lapply(evaluations, singleEvaluationPlot)
-         grid.arrange(grobs = plots)
-         return(invisible())
-      }
-   }
-
-   for (el in monitor) {
-      plotMonitoring(el, evaluation)
-   }
+   return(invisible())
 }
 
 
@@ -58,9 +41,26 @@ singleEvaluationPlot <- function(plotdata) {
 }
 
 
-# returns a list of data frames each contatining the data for one plot
+# returns a list of data frames each containing the data for one plot
 extractEvaluations <- function(monitor, evaluation, sdrange) {
+   if (!is.list(monitor) || length(monitor) == 0) {
+      return(list())
+   }
 
+   if (!is.null(attr(monitor, "JLTYPE"))) {
+      if (startsWith(attr(monitor, "JLTYPE"), "Array{MonitoringItem")) {
+         return(extractEvaluationsFromSingleMonitor(monitor, evaluation, sdrange))
+      } else {
+         return(unlist(lapply(monitor, function(m) {extractEvaluations(m, evaluation, sdrange)}),
+                recursive = FALSE))
+      }
+   }
+
+   return(list())
+}
+
+
+extractEvaluationsFromSingleMonitor <- function(monitor, evaluation, sdrange) {
    plotdata <- do.call(rbind, monitor)
    plotdata <- data.frame(Epoch = unlist(plotdata[, "epoch"]),
                           Value = unlist(plotdata[, "value"]),

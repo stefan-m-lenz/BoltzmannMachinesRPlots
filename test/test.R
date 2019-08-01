@@ -19,5 +19,13 @@ plotMonitoring(result, c("reconstructionerror", "exactloglikelihood"))
 
 result <- monitored_fitrbm(barsandstripes(10L, 4L),
                            monitoring = juliaExpr("monitorloglikelihood!"))
+plotMonitoring(result)
+
+result <- monitored_fitdbm(barsandstripes(10L, 4L),
+                           monitoringpretraining = juliaExpr("monitorloglikelihood!"),
+                           monitoring = juliaExpr("monitorlogproblowerbound!"),
+                           pretraining = list(TrainPartitionedLayer(list(TrainLayer(nvisible = 2L, nhidden =2L),
+                                                                         TrainLayer(nvisible = 2L, nhidden = 2L))),
+                                              TrainLayer(nhidden = 3L)))
 
 plotMonitoring(result)
