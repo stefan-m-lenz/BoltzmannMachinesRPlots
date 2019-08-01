@@ -47,13 +47,12 @@ extractEvaluations <- function(monitor, evaluation, sdrange) {
       return(list())
    }
 
-   if (!is.null(attr(monitor, "JLTYPE"))) {
-      if (startsWith(attr(monitor, "JLTYPE"), "Array{MonitoringItem")) {
-         return(extractEvaluationsFromSingleMonitor(monitor, evaluation, sdrange))
-      } else {
-         return(unlist(lapply(monitor, function(m) {extractEvaluations(m, evaluation, sdrange)}),
-                recursive = FALSE))
-      }
+   jltype = attr(monitor, "JLTYPE")
+   if (!is.null(jltype) && jltype == "Array{MonitoringItem,1}") {
+      return(extractEvaluationsFromSingleMonitor(monitor, evaluation, sdrange))
+   } else {
+      return(unlist(lapply(monitor, function(m) {extractEvaluations(m, evaluation, sdrange)}),
+             recursive = FALSE))
    }
 
    return(list())
