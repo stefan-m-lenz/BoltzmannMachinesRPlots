@@ -43,11 +43,15 @@ AIS_EVALUATION_KEYS <- c("loglikelihood", "logproblowerbound")
 
 
 singleEvaluationPlot <- function(plotdata) {
-   p <- ggplot(data = plotdata, aes(x = Epoch, y = Value, color = Dataset)) +
-      geom_line() + ggtitle(PLOT_TITLES[[plotdata$Evaluation[1]]]) + theme_light()
+   plottitle <- PLOT_TITLES[[plotdata$Evaluation[1]]]
+   p <- ggplot(data = plotdata) +
+      geom_line(aes(x = Epoch, y = Value, color = Dataset)) +
+      ggtitle(plottitle) + theme_light()
 
    if (!is.null(plotdata$rangemin)) {
-      p <- p + geom_ribbon(ymin = plotdata$rangemin, ymax = plotdata$rangemax,
+      p <- p + geom_ribbon(x = plotdata$Epoch,
+                           ymin = plotdata$rangemin,
+                           ymax = plotdata$rangemax,
                            alpha = 0.1)
    }
    p
