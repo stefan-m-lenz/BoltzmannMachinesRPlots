@@ -32,9 +32,9 @@ singleEvaluationPlot <- function(plotdata) {
       ggtitle(plottitle) + theme_light()
 
    if (!is.null(plotdata$rangemin)) {
-      p <- p + geom_ribbon(x = plotdata$Epoch,
-                           ymin = plotdata$rangemin,
-                           ymax = plotdata$rangemax,
+      p <- p + geom_ribbon(aes(x = Epoch,
+                               ymin = rangemin,
+                               ymax = rangemax),
                            alpha = 0.1)
    }
    p
