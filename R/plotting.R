@@ -27,17 +27,21 @@ AIS_EVALUATION_KEYS <- c("loglikelihood", "logproblowerbound")
 
 singleEvaluationPlot <- function(plotdata) {
    plottitle <- PLOT_TITLES[[plotdata$Evaluation[1]]]
-   p <- ggplot(data = plotdata) +
-      geom_line(aes(x = Epoch, y = Value, color = Dataset)) +
-      ggtitle(plottitle) + theme_light()
+   if (is.null(plotdata$rangemin)) {
+      return(ggplot(data = plotdata) +
+         geom_line(aes(x = Epoch, y = Value, color = Dataset)) +
+         ggtitle(plottitle) + theme_light())
 
-   if (!is.null(plotdata$rangemin)) {
-      p <- p + geom_ribbon(aes(x = Epoch,
-                               ymin = rangemin,
-                               ymax = rangemax),
-                           alpha = 0.1)
+   } else {
+      return(ggplot(data = plotdata, aes(x = Epoch, y = Value, color = Dataset,
+                                         ymin = rangemin, ymax = rangemax)) +
+                geom_line() +
+            ggtitle(plottitle) +
+            theme_light() +
+            geom_ribbon(aes(x= Epoch, ymin = rangemin, ymax = rangemax),
+                        linetype = 0,
+                        alpha = 0.1))
    }
-   p
 }
 
 
@@ -76,14 +80,14 @@ extractEvaluationsFromSingleMonitor <- function(monitor, evaluation, sdrange) {
    aisinfo <- split(aisinfo, aisinfo$Evaluation)
    aisevaluationIdx <- Position(function(x) { x$Evaluation[[1]] %in% AIS_EVALUATION_KEYS },
                                 evaluations)
-   if (!is.na(aisevaluationIdx)) {
+   if (!is.na(aisevaluationIdx)) { # Data for uncertainty of estimation is extracted
       if (length(aisevaluationIdx) == 1) {
          aisSd <- Filter(function(x) {x$Evaluation[[1]] == "aisstandarddeviation"}, aisinfo)
          aisSd <- aisSd$aisstandarddeviation$Value
          aisLogr <- Filter(function(x) {x$Evaluation[[1]] == "aislogr"}, aisinfo)
          aisLogr <- aisLogr$aislogr$Value
          aisevaluation <- evaluations[[aisevaluationIdx]]
-         bottom_top <- aisPrecision(aisLogr, aisSd, sdrange)
+         bottom_top <- aisPrecision(aisLogr, aisSd, sdrange) # TODO check for multiple datasets
          aisevaluation$rangemin <- aisevaluation$Value - bottom_top[[1]]
          aisevaluation$rangemax <- aisevaluation$Value - bottom_top[[2]]
          evaluations[[aisevaluationIdx]] <- aisevaluation

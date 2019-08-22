@@ -21,6 +21,14 @@ result <- monitored_fitrbm(barsandstripes(10L, 4L),
                            monitoring = juliaExpr("monitorloglikelihood!"))
 plotMonitoring(result) # one graph with ribbon
 
+xtrain <- barsandstripes(50L, 4L)
+xtest <- barsandstripes(20L, 4L)
+result <- monitored_fitrbm(xtrain,
+                           monitoring = juliaExpr("monitorloglikelihood!"),
+                           monitoringdata = juliaLet('DataDict("Training data" => xtrain, "Test data" => xtest)',
+                                                     xtrain = xtrain, xtest = xtest))
+plotMonitoring(result) # one graph with two curves with ribbons
+
 result <- monitored_fitdbm(barsandstripes(10L, 4L),
                            monitoringpretraining = juliaExpr("monitorloglikelihood!"),
                            monitoring = juliaExpr("monitorlogproblowerbound!"),
@@ -33,3 +41,9 @@ plotMonitoring(result)
 plotMonitoring(list(server1 = result[[1]]))
 plotMonitoring(list(server1 = result))
 plotMonitoring(list(server1 = result), evaluation = "logproblowerbound")# one graph
+
+
+# no monitoring of pretraining
+result <- monitored_fitdbm(barsandstripes(10L, 4L),
+                           monitoring = juliaExpr("monitorexactloglikelihood!"))
+plotMonitoring(result) # one graph
