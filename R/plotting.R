@@ -87,7 +87,9 @@ extractEvaluationsFromSingleMonitor <- function(monitor, evaluation, sdrange) {
          aisLogr <- Filter(function(x) {x$Evaluation[[1]] == "aislogr"}, aisinfo)
          aisLogr <- aisLogr$aislogr$Value
          aisevaluation <- evaluations[[aisevaluationIdx]]
-         bottom_top <- aisPrecision(aisLogr, aisSd, sdrange) # TODO check for multiple datasets
+         # sorting to reuse subtraction below for each monitoring data set
+         aisevaluation <- aisevaluation[order(aisevaluation$Dataset, aisevaluation$Epoch), ]
+         bottom_top <- aisPrecision(aisLogr, aisSd, sdrange)
          aisevaluation$rangemin <- aisevaluation$Value - bottom_top[[1]]
          aisevaluation$rangemax <- aisevaluation$Value - bottom_top[[2]]
          evaluations[[aisevaluationIdx]] <- aisevaluation
