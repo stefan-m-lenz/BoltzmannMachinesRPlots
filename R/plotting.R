@@ -45,6 +45,14 @@ singleEvaluationPlot <- function(plotdata) {
 }
 
 
+isMonitor <- function(x) {
+   jltype <- attr(x, "JLTYPE")
+   return(!is.null(jltype) && (
+             jltype == "Array{BoltzmannMachines.MonitoringItem,1}" ||
+             jltype == "Array{MonitoringItem,1}"))
+}
+
+
 # returns a list of data frames each containing the data for one plot
 extractEvaluations <- function(monitor, evaluation, sdrange) {
    if (!is.list(monitor) || length(monitor) == 0) {
@@ -52,7 +60,7 @@ extractEvaluations <- function(monitor, evaluation, sdrange) {
    }
 
    jltype = attr(monitor, "JLTYPE")
-   if (!is.null(jltype) && jltype == "Array{MonitoringItem,1}") {
+   if (isMonitor(monitor)) {
       return(extractEvaluationsFromSingleMonitor(monitor, evaluation, sdrange))
    } else {
       return(unlist(lapply(monitor, function(m) {extractEvaluations(m, evaluation, sdrange)}),

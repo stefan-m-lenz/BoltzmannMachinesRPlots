@@ -1,49 +1,53 @@
 
 
 library(JuliaConnectoR)
-juliaUsing("BoltzmannMachines")
-result <- monitored_fitrbm(barsandstripes(10L, 4L),
-                          monitoring = juliaExpr("monitorexactloglikelihood!"))
-plotMonitoring(result) # one graph
-result <- monitored_fitrbm(barsandstripes(10L, 4L),
-                          monitoring = juliaExpr("[monitorexactloglikelihood!, monitorreconstructionerror!]"))
-plotMonitoring(result) # two graphs
+BMs <- juliaImport("BoltzmannMachines")
+#juliaEval("using BoltzmannMachines")
+result <- BMs$monitored_fitrbm(BMs$barsandstripes(10L, 4L),
+                               monitoring = BMs$`monitorexactloglikelihood!`)
+plotMonitoring(juliaGet(result)) # one graph
+result <- BMs$monitored_fitrbm(BMs$barsandstripes(10L, 4L),
+                          monitoring = c(BMs$`monitorexactloglikelihood!`,
+                                         BMs$`monitorreconstructionerror!`))
+plotMonitoring(juliaGet(result)) # two graphs
 
-result <- monitored_fitdbm(barsandstripes(100L, 4L), learningratepretraining = 0.001,
-                          monitoring = juliaExpr("monitorexactloglikelihood!"),
-                          monitoringpretraining = juliaExpr("monitorreconstructionerror!"))
+result <- BMs$monitored_fitdbm(BMs$barsandstripes(100L, 4L), learningratepretraining = 0.001,
+                          monitoring = BMs$`monitorexactloglikelihood!`,
+                          monitoringpretraining = BMs$`monitorreconstructionerror!`)
+result <- juliaGet(result)
 plotMonitoring(result) # 3 graphs
 plotMonitoring(result, "reconstructionerror") # 2 graphs
 plotMonitoring(result, c("reconstructionerror", "exactloglikelihood")) # 3 graphs
 
 
-result <- monitored_fitrbm(barsandstripes(10L, 4L),
-                           monitoring = juliaExpr("monitorloglikelihood!"))
-plotMonitoring(result) # one graph with ribbon
+result <- BMs$monitored_fitrbm(BMs$barsandstripes(10L, 4L),
+                               monitoring = BMs$`monitorloglikelihood!`)
+plotMonitoring(juliaGet(result)) # one graph with ribbon
 
-xtrain <- barsandstripes(50L, 4L)
-xtest <- barsandstripes(20L, 4L)
-result <- monitored_fitrbm(xtrain,
-                           monitoring = juliaExpr("monitorloglikelihood!"),
-                           monitoringdata = juliaLet('DataDict("Training data" => xtrain, "Test data" => xtest)',
+xtrain <- BMs$barsandstripes(50L, 4L)
+xtest <- BMs$barsandstripes(20L, 4L)
+result <- BMs$monitored_fitrbm(xtrain,
+                           monitoring = BMs$`monitorloglikelihood!`,
+                           monitoringdata = juliaLet('BoltzmannMachines.DataDict("Training data" => xtrain, "Test data" => xtest)',
                                                      xtrain = xtrain, xtest = xtest))
-plotMonitoring(result) # one graph with two curves with ribbons
+plotMonitoring(juliaGet(result)) # one graph with two curves with ribbons
 
-result <- monitored_fitdbm(barsandstripes(10L, 4L),
-                           monitoringpretraining = juliaExpr("monitorloglikelihood!"),
-                           monitoring = juliaExpr("monitorlogproblowerbound!"),
-                           pretraining = list(TrainPartitionedLayer(list(TrainLayer(nvisible = 2L, nhidden =2L),
-                                                                         TrainLayer(nvisible = 2L, nhidden = 2L))),
-                                              TrainLayer(nhidden = 3L)))
-plotMonitoring(result[[1]]) # 4 graphs
-plotMonitoring(result)
+result <- BMs$monitored_fitdbm(BMs$barsandstripes(10L, 4L),
+                           monitoringpretraining = BMs$`monitorloglikelihood!`,
+                           monitoring = BMs$`monitorlogproblowerbound!`,
+                           pretraining = list(BMs$TrainPartitionedLayer(list(BMs$TrainLayer(nvisible = 2L, nhidden =2L),
+                                                                             BMs$TrainLayer(nvisible = 2L, nhidden = 2L))),
+                                              BMs$TrainLayer(nhidden = 3L)))
+plotMonitoring(juliaGet(result[[1]])) # 4 graphs
+plotMonitoring(juliaGet(result))
 # possible datashield results
-plotMonitoring(list(server1 = result[[1]]))
-plotMonitoring(list(server1 = result))
-plotMonitoring(list(server1 = result), evaluation = "logproblowerbound")# one graph
+plotMonitoring(list(server1 = juliaGet(result[[1]])))
+plotMonitoring(list(server1 = juliaGet(result)))
+plotMonitoring(list(server1 = juliaGet(result)), evaluation = "logproblowerbound")# one graph
 
 
 # no monitoring of pretraining
-result <- monitored_fitdbm(barsandstripes(10L, 4L),
-                           monitoring = juliaExpr("monitorexactloglikelihood!"))
-plotMonitoring(result) # one graph
+result <- BMs$monitored_fitdbm(BMs$barsandstripes(10L, 4L),
+                               monitoring = BMs$`monitorexactloglikelihood!`)
+plotMonitoring(juliaGet(result)) # one graph
+
