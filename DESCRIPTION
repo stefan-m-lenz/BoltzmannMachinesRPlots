@@ -1,7 +1,7 @@
 Package: BoltzmannMachinesRPlots
 Type: Package
 Title: Monitoring plots for BoltzmannMachines.jl in R
-Version: 0.1.0
+Version: 0.1.1
 Author: Stefan Lenz
 Maintainer: Stefan Lenz <lenz@imbi.uni-freiburg.de>
 Description: Plots that are created with the BoltzmannMachines.jl Julia
